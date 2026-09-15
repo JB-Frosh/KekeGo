@@ -1,16 +1,11 @@
 services:
   - type: web
-    name: kekego-api
+    name: kekego
     runtime: python
-    buildCommand: pip install -r KekeGo/requirements.txt
+    rootDir: .
+    buildCommand: >-
+      pip install -r KekeGo/requirements.txt &&
+      npm install --prefix student-app &&
+      npm run build --prefix student-app &&
+      python manage.py collectstatic --noinput
     startCommand: gunicorn KekeGo.wsgi:application
-
-  - type: static
-    name: kekego-student-app
-    rootDir: student-app
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
